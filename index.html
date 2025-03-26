@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Hobby Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>My Hobby Tracker</h1>
+        <nav>
+            <ul>
+                <li><a href="#dashboard">Dashboard</a></li>
+                <li><a href="#hobbies">My Hobbies</a></li>
+                <li><a href="#progress">Progress</a></li>
+                <li><a href="#add">Add Activity</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="dashboard">
+            <h2>Dashboard</h2>
+            <div class="stats">
+                <div class="stat-card">
+                    <h3>Active Hobbies</h3>
+                    <p id="active-hobbies">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Hours This Week</h3>
+                    <p id="weekly-hours">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Current Streak</h3>
+                    <p id="current-streak">0 days</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="hobbies">
+            <h2>My Hobbies</h2>
+            <div class="hobby-list">
+                <!-- Hobby cards will be added here dynamically -->
+            </div>
+            <button id="add-hobby-btn">Add New Hobby</button>
+        </section>
+
+        <section id="progress">
+            <h2>Progress</h2>
+            <div class="progress-charts">
+                <canvas id="timeChart" width="400" height="200"></canvas>
+                <canvas id="frequencyChart" width="400" height="200"></canvas>
+            </div>
+        </section>
+
+        <section id="add">
+            <h2>Log Activity</h2>
+            <form id="activity-form">
+                <div class="form-group">
+                    <label for="hobby-select">Hobby:</label>
+                    <select id="hobby-select" required>
+                        <option value="">Select a hobby</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="activity-date">Date:</label>
+                    <input type="date" id="activity-date" required>
+                </div>
+                <div class="form-group">
+                    <label for="activity-duration">Duration (minutes):</label>
+                    <input type="number" id="activity-duration" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="activity-notes">Notes:</label>
+                    <textarea id="activity-notes"></textarea>
+                </div>
+                <button type="submit">Log Activity</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 My Hobby Tracker</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
