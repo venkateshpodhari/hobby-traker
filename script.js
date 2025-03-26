@@ -1,58 +1,80 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Sample data - in a real app, this would come from a database
-    let hobbies = [
-        { id: 1, name: 'Photography', category: 'Creative', targetHours: 20 },
-        { id: 2, name: 'Running', category: 'Fitness', targetHours: 15 },
-        { id: 3, name: 'Reading', category: 'Educational', targetHours: 10 }
-    ];
+    // Load data from localStorage or initialize
+    let hobbies = JSON.parse(localStorage.getItem('hobbies')) || [];
+    let activities = JSON.parse(localStorage.getItem('activities')) || [];
 
-    let activities = [
-        { id: 1, hobbyId: 1, date: '2023-05-01', duration: 60, notes: 'Nature photography in the park' },
-        { id: 2, hobbyId: 2, date: '2023-05-02', duration: 30, notes: 'Morning run' },
-        { id: 3, hobbyId: 1, date: '2023-05-03', duration: 45, notes: 'Portrait session' }
-    ];
-
-    // DOM elements
-    const hobbyList = document.querySelector('.hobby-list');
-    const hobbySelect = document.getElementById('hobby-select');
+    // DOM Elements
+    const hobbyForm = document.getElementById('hobby-form');
+    const hobbyList = document.getElementById('hobby-list');
     const activityForm = document.getElementById('activity-form');
-    const addHobbyBtn = document.getElementById('add-hobby-btn');
+    const hobbySelect = document.getElementById('activity-hobby');
 
-    // Initialize the page
-    renderHobbyList();
-    updateStats();
-    renderCharts();
-    populateHobbySelect();
+    // Render all data
+    renderHobbies();
+    renderHobbySelect();
 
-    // Event listeners
-    activityForm.addEventListener('submit', handleActivitySubmit);
-    addHobbyBtn.addEventListener('click', handleAddHobby);
+    // Add new hobby
+    hobbyForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const newHobby = {
+            id: Date.now(), // Unique ID
+            name: document.getElementById('hobby-name').value,
+            category: document.getElementById('hobby-category').value,
+            targetHours: parseInt(document.getElementById('hobby-target').value)
+        };
+        
+        hobbies.push(newHobby);
+        saveData();
+        renderHobbies();
+        renderHobbySelect();
+        hobbyForm.reset();
+    });
 
-    function renderHobbyList() {
+    // Log activity
+    activityForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const newActivity = {
+            hobbyId: parseInt(hobbySelect.value),
+            date: document.getElementById('activity-date').value,
+            duration: parseInt(document.getElementById('activity-duration').value),
+            notes: document.getElementById('activity-notes').value
+        };
+        
+        activities.push(newActivity);
+        saveData();
+        activityForm.reset();
+        alert('Activity logged!');
+    });
+
+    // Render hobbies list
+    function renderHobbies() {
         hobbyList.innerHTML = '';
         hobbies.forEach(hobby => {
-            const hobbyActivities = activities.filter(a => a.hobbyId === hobby.id);
-            const totalHours = hobbyActivities.reduce((sum, a) => sum + a.duration, 0) / 60;
-            const progress = Math.min((totalHours / hobby.targetHours) * 100, 100);
-
             const card = document.createElement('div');
             card.className = 'hobby-card';
             card.innerHTML = `
                 <h3>${hobby.name}</h3>
                 <p>Category: ${hobby.category}</p>
                 <p>Target: ${hobby.targetHours} hours</p>
-                <p>Logged: ${totalHours.toFixed(1)} hours</p>
-                <div class="progress-bar">
-                    <div class="progress" style="width: ${progress}%"></div>
-                </div>
-                <p>${progress.toFixed(1)}% complete</p>
+                <button class="edit-btn" data-id="${hobby.id}">Edit</button>
+                <button class="delete-btn" data-id="${hobby.id}">Delete</button>
             `;
             hobbyList.appendChild(card);
         });
+
+        // Add event listeners to new buttons
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', deleteHobby);
+        });
+        
+        document.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.addEventListener('click', editHobby);
+        });
     }
 
-    function populateHobbySelect() {
-        hobbySelect.innerHTML = '<option value="">Select a hobby</option>';
+    // Render hobby dropdown
+    function renderHobbySelect() {
+        hobbySelect.innerHTML = '<option value="">Select Hobby</option>';
         hobbies.forEach(hobby => {
             const option = document.createElement('option');
             option.value = hobby.id;
@@ -61,138 +83,38 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    function handleActivitySubmit(e) {
-        e.preventDefault();
-        
-        const newActivity = {
-            id: activities.length + 1,
-            hobbyId: parseInt(hobbySelect.value),
-            date: document.getElementById('activity-date').value,
-            duration: parseInt(document.getElementById('activity-duration').value),
-            notes: document.getElementById('activity-notes').value
-        };
-        
-        activities.push(newActivity);
-        activityForm.reset();
-        
-        updateStats();
-        renderHobbyList();
-        renderCharts();
+    // Delete hobby
+    function deleteHobby(e) {
+        const id = parseInt(e.target.dataset.id);
+        hobbies = hobbies.filter(hobby => hobby.id !== id);
+        activities = activities.filter(activity => activity.hobbyId !== id);
+        saveData();
+        renderHobbies();
+        renderHobbySelect();
     }
 
-    function handleAddHobby() {
-        const name = prompt('Enter hobby name:');
-        if (name) {
-            const category = prompt('Enter category:');
-            const targetHours = parseInt(prompt('Enter target hours:'));
-            
-            const newHobby = {
-                id: hobbies.length + 1,
-                name,
-                category,
-                targetHours
-            };
-            
-            hobbies.push(newHobby);
-            renderHobbyList();
-            populateHobbySelect();
+    // Edit hobby
+    function editHobby(e) {
+        const id = parseInt(e.target.dataset.id);
+        const hobby = hobbies.find(h => h.id === id);
+        
+        const newName = prompt('Edit hobby name:', hobby.name);
+        const newCategory = prompt('Edit category:', hobby.category);
+        const newTarget = prompt('Edit target hours:', hobby.targetHours);
+        
+        if (newName && newCategory && newTarget) {
+            hobby.name = newName;
+            hobby.category = newCategory;
+            hobby.targetHours = parseInt(newTarget);
+            saveData();
+            renderHobbies();
+            renderHobbySelect();
         }
     }
 
-    function updateStats() {
-        document.getElementById('active-hobbies').textContent = hobbies.length;
-        
-        const weeklyHours = activities
-            .filter(a => isDateInLastWeek(a.date))
-            .reduce((sum, a) => sum + a.duration, 0) / 60;
-        
-        document.getElementById('weekly-hours').textContent = weeklyHours.toFixed(1);
-    }
-
-    function isDateInLastWeek(dateStr) {
-        const date = new Date(dateStr);
-        const oneWeekAgo = new Date();
-        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-        return date >= oneWeekAgo;
-    }
-
-    function renderCharts() {
-        const timeCtx = document.getElementById('timeChart').getContext('2d');
-        const frequencyCtx = document.getElementById('frequencyChart').getContext('2d');
-        
-        // Time spent per hobby
-        const timeData = hobbies.map(hobby => {
-            const hobbyActivities = activities.filter(a => a.hobbyId === hobby.id);
-            return hobbyActivities.reduce((sum, a) => sum + a.duration, 0) / 60;
-        });
-        
-        new Chart(timeCtx, {
-            type: 'bar',
-            data: {
-                labels: hobbies.map(h => h.name),
-                datasets: [{
-                    label: 'Hours Spent',
-                    data: timeData,
-                    backgroundColor: 'rgba(74, 111, 165, 0.7)'
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'Hours'
-                        }
-                    }
-                }
-            }
-        });
-        
-        // Activity frequency
-        const last30Days = activities.filter(a => {
-            const activityDate = new Date(a.date);
-            const thirtyDaysAgo = new Date();
-            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-            return activityDate >= thirtyDaysAgo;
-        });
-        
-        const dates = Array(30).fill().map((_, i) => {
-            const d = new Date();
-            d.setDate(d.getDate() - (29 - i));
-            return d.toISOString().split('T')[0];
-        });
-        
-        const frequencyData = dates.map(date => {
-            return last30Days.filter(a => a.date === date).length;
-        });
-        
-        new Chart(frequencyCtx, {
-            type: 'line',
-            data: {
-                labels: dates.map(d => d.split('-').slice(1).join('/')),
-                datasets: [{
-                    label: 'Activities per Day',
-                    data: frequencyData,
-                    borderColor: 'rgba(74, 111, 165, 1)',
-                    backgroundColor: 'rgba(74, 111, 165, 0.1)',
-                    fill: true,
-                    tension: 0.3
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'Number of Activities'
-                        }
-                    }
-                }
-            }
-        });
+    // Save all data
+    function saveData() {
+        localStorage.setItem('hobbies', JSON.stringify(hobbies));
+        localStorage.setItem('activities', JSON.stringify(activities));
     }
 });
