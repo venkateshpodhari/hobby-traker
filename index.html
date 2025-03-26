@@ -1,51 +1,168 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Hobby Tracker</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>HobbyTrack Pro | Your Personal Activity Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <header>
-        <h1>My Hobby Tracker</h1>
-    </header>
-
-    <main>
-        <!-- Add Hobby Section -->
-        <section id="add-hobby">
-            <h2>Add New Hobby</h2>
-            <form id="hobby-form">
-                <input type="text" id="hobby-name" placeholder="Hobby Name" required>
-                <input type="text" id="hobby-category" placeholder="Category" required>
-                <input type="number" id="hobby-target" placeholder="Target Hours" min="1" required>
-                <button type="submit">Add Hobby</button>
-            </form>
-        </section>
-
-        <!-- Hobbies List -->
-        <section id="hobbies">
-            <h2>My Hobbies</h2>
-            <div class="hobby-list" id="hobby-list">
-                <!-- Hobbies will appear here dynamically -->
+    <div class="app-container">
+        <!-- Side Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <i class="fas fa-chart-line"></i>
+                <span>HobbyTrack</span>
             </div>
-        </section>
+            <ul class="nav-links">
+                <li class="active"><a href="#dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="#hobbies"><i class="fas fa-running"></i> My Hobbies</a></li>
+                <li><a href="#activities"><i class="fas fa-history"></i> Activities</a></li>
+                <li><a href="#reports"><i class="fas fa-chart-pie"></i> Reports</a></li>
+                <li><a href="#settings"><i class="fas fa-cog"></i> Settings</a></li>
+            </ul>
+            <div class="user-profile">
+                <img src="https://ui-avatars.com/api/?name=User" alt="Profile">
+                <div class="user-info">
+                    <span class="user-name">Welcome Back</span>
+                    <span class="user-email">user@hobbytrack.com</span>
+                </div>
+            </div>
+        </nav>
 
-        <!-- Activity Log -->
-        <section id="activities">
-            <h2>Log Activity</h2>
-            <form id="activity-form">
-                <select id="activity-hobby" required>
-                    <option value="">Select Hobby</option>
-                </select>
-                <input type="date" id="activity-date" required>
-                <input type="number" id="activity-duration" placeholder="Minutes" min="1" required>
-                <textarea id="activity-notes" placeholder="Notes"></textarea>
-                <button type="submit">Log Activity</button>
-            </form>
-        </section>
-    </main>
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search...">
+                </div>
+                <div class="user-actions">
+                    <button class="theme-toggle"><i class="fas fa-moon"></i></button>
+                    <div class="notifications">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge">3</span>
+                    </div>
+                </div>
+            </header>
 
-    <script src="script.js"></script>
+            <div class="content-wrapper">
+                <!-- Dashboard Section -->
+                <section id="dashboard" class="section active">
+                    <h2>Dashboard Overview</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card primary">
+                            <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                            <div class="stat-info">
+                                <h3>Total Hours</h3>
+                                <p class="stat-value">127</p>
+                                <p class="stat-change">+12% from last month</p>
+                            </div>
+                        </div>
+                        <!-- More stat cards... -->
+                    </div>
+                    
+                    <div class="chart-container">
+                        <canvas id="activityChart"></canvas>
+                    </div>
+                </section>
+
+                <!-- Hobbies Management Section -->
+                <section id="hobbies" class="section">
+                    <div class="section-header">
+                        <h2>My Hobbies</h2>
+                        <button class="btn primary" id="addHobbyBtn">
+                            <i class="fas fa-plus"></i> Add Hobby
+                        </button>
+                    </div>
+                    
+                    <div class="hobbies-grid" id="hobbiesContainer">
+                        <!-- Hobbies will be dynamically inserted here -->
+                    </div>
+                </section>
+
+                <!-- Activity Log Section -->
+                <section id="activities" class="section">
+                    <h2>Activity Log</h2>
+                    <div class="activity-controls">
+                        <div class="filter-controls">
+                            <select class="form-select">
+                                <option>All Hobbies</option>
+                            </select>
+                            <input type="date" class="form-control">
+                            <button class="btn outline"><i class="fas fa-filter"></i> Filter</button>
+                        </div>
+                        <button class="btn primary" id="logActivityBtn">
+                            <i class="fas fa-plus"></i> Log Activity
+                        </button>
+                    </div>
+                    
+                    <div class="activity-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Hobby</th>
+                                    <th>Duration</th>
+                                    <th>Notes</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="activitiesTable">
+                                <!-- Activities will be dynamically inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Modals -->
+        <div class="modal" id="hobbyModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Add New Hobby</h3>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="hobbyForm">
+                        <div class="form-group">
+                            <label>Hobby Name</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Category</label>
+                            <select class="form-control" required>
+                                <option value="">Select Category</option>
+                                <option>Creative</option>
+                                <option>Fitness</option>
+                                <option>Educational</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Target Hours (per month)</label>
+                            <input type="number" class="form-control" min="1" value="10" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Hobby Icon</label>
+                            <div class="icon-selector">
+                                <!-- Icon options would go here -->
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn outline close-modal">Cancel</button>
+                            <button type="submit" class="btn primary">Save Hobby</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>
