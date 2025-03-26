@@ -9,82 +9,43 @@
 <body>
     <header>
         <h1>My Hobby Tracker</h1>
-        <nav>
-            <ul>
-                <li><a href="#dashboard">Dashboard</a></li>
-                <li><a href="#hobbies">My Hobbies</a></li>
-                <li><a href="#progress">Progress</a></li>
-                <li><a href="#add">Add Activity</a></li>
-            </ul>
-        </nav>
     </header>
 
     <main>
-        <section id="dashboard">
-            <h2>Dashboard</h2>
-            <div class="stats">
-                <div class="stat-card">
-                    <h3>Active Hobbies</h3>
-                    <p id="active-hobbies">0</p>
-                </div>
-                <div class="stat-card">
-                    <h3>Hours This Week</h3>
-                    <p id="weekly-hours">0</p>
-                </div>
-                <div class="stat-card">
-                    <h3>Current Streak</h3>
-                    <p id="current-streak">0 days</p>
-                </div>
-            </div>
+        <!-- Add Hobby Section -->
+        <section id="add-hobby">
+            <h2>Add New Hobby</h2>
+            <form id="hobby-form">
+                <input type="text" id="hobby-name" placeholder="Hobby Name" required>
+                <input type="text" id="hobby-category" placeholder="Category" required>
+                <input type="number" id="hobby-target" placeholder="Target Hours" min="1" required>
+                <button type="submit">Add Hobby</button>
+            </form>
         </section>
 
+        <!-- Hobbies List -->
         <section id="hobbies">
             <h2>My Hobbies</h2>
-            <div class="hobby-list">
-                <!-- Hobby cards will be added here dynamically -->
-            </div>
-            <button id="add-hobby-btn">Add New Hobby</button>
-        </section>
-
-        <section id="progress">
-            <h2>Progress</h2>
-            <div class="progress-charts">
-                <canvas id="timeChart" width="400" height="200"></canvas>
-                <canvas id="frequencyChart" width="400" height="200"></canvas>
+            <div class="hobby-list" id="hobby-list">
+                <!-- Hobbies will appear here dynamically -->
             </div>
         </section>
 
-        <section id="add">
+        <!-- Activity Log -->
+        <section id="activities">
             <h2>Log Activity</h2>
             <form id="activity-form">
-                <div class="form-group">
-                    <label for="hobby-select">Hobby:</label>
-                    <select id="hobby-select" required>
-                        <option value="">Select a hobby</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="activity-date">Date:</label>
-                    <input type="date" id="activity-date" required>
-                </div>
-                <div class="form-group">
-                    <label for="activity-duration">Duration (minutes):</label>
-                    <input type="number" id="activity-duration" min="1" required>
-                </div>
-                <div class="form-group">
-                    <label for="activity-notes">Notes:</label>
-                    <textarea id="activity-notes"></textarea>
-                </div>
+                <select id="activity-hobby" required>
+                    <option value="">Select Hobby</option>
+                </select>
+                <input type="date" id="activity-date" required>
+                <input type="number" id="activity-duration" placeholder="Minutes" min="1" required>
+                <textarea id="activity-notes" placeholder="Notes"></textarea>
                 <button type="submit">Log Activity</button>
             </form>
         </section>
     </main>
 
-    <footer>
-        <p>&copy; 2023 My Hobby Tracker</p>
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
